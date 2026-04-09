@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Delivery Details</h2>
+
+    <form method="post" action="/place_order" class="checkout-form">
+        <textarea name="address" placeholder="Enter full delivery address" required></textarea>
+        <input type="text" name="phone" placeholder="Enter contact number" required>
+        <button type="submit" class="add-btn">Place Order</button>
+    </form>
+</div>
+{% endblock %}

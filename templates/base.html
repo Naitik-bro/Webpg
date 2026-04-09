@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Codex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="nav-left">
+            <span class="logo">CODEX</span>
+        </div>
+
+        <div class="nav-center">
+            <a href="/books">Books</a>
+            <a href="/cart">Cart</a>
+            <a href="/orders">Orders</a>
+            <a href="/logout" class="logout-link">Logout</a>
+            {% if session.get('email') == 'admin@gmail.com' %}
+            <a href="/admin">Admin</a>
+            <a href="/admin_orders">Admin Orders</a>
+
+            {% endif %}
+        </div>
+
+        <div class="nav-right">
+            <div class="profile-box">
+                <span class="profile-icon">👤</span>
+                <span class="profile-email">{{ session.get('email', 'Guest') }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+</body>
+
+</html>

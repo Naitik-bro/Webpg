@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .orders-section {
+        background: #0b0b0b;
+        min-height: 90vh;
+        padding: 60px 40px;
+        color: white;
+    }
+
+    .orders-header {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 40px;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 2px solid #222;
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+
+    .orders-header span {
+        color: #e63232;
+    }
+
+    .orders-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 30px;
+    }
+
+    .premium-order-card {
+        background: #141414;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #2a2a2a;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s, border-color 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .premium-order-card:hover {
+        transform: translateY(-5px);
+        border-color: #e63232;
+        box-shadow: 0 15px 40px rgba(230, 50, 50, 0.15);
+    }
+
+    .premium-order-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+    }
+
+    .status-done::before {
+        background: #27ae60;
+    }
+
+    .status-pending::before {
+        background: #f39c12;
+    }
+
+    .status-cancelled::before {
+        background: #e74c3c;
+    }
+
+    .order-id-badge {
+        font-size: 14px;
+        color: #aaa;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-id-badge strong {
+        color: #fff;
+        font-size: 18px;
+    }
+
+    .order-total {
+        font-size: 24px;
+        font-weight: 900;
+        color: #e63232;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .order-items-list {
+        background: #0b0b0b;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 20px;
+        border: 1px solid #1a1a1a;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #222;
+        font-size: 14px;
+        color: #ddd;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-qty {
+        color: #e63232;
+        font-weight: 700;
+        background: #1a1a1a;
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .status-badge-custom {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .done-badge {
+        background: rgba(39, 174, 96, 0.15);
+        color: #2ecc71;
+        border: 1px solid #27ae60;
+    }
+
+    .pending-badge {
+        background: rgba(243, 156, 18, 0.15);
+        color: #f1c40f;
+        border: 1px solid #f39c12;
+    }
+
+    .cancelled-badge {
+        background: rgba(231, 76, 60, 0.15);
+        color: #e74c3c;
+        border: 1px solid #c0392b;
+    }
+
+    .empty-orders {
+        text-align: center;
+        padding: 80px 20px;
+        background: #141414;
+        border-radius: 16px;
+        border: 1px dashed #333;
+    }
+
+    .empty-orders h3 {
+        color: #fff;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .empty-orders p {
+        color: #777;
+        margin-bottom: 25px;
+    }
+
+    .shop-now-btn {
+        background: #e63232;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+        display: inline-block;
+    }
+
+    .shop-now-btn:hover {
+        background: #c52a2a;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="orders-section">
+    <h2 class="orders-header">Your <span>Orders</span></h2>
+
+    {% if orders %}
+    <div class="orders-grid">
+        {% for o in orders %}
+        <div
+            class="premium-order-card {% if o.status == 'Done' %}status-done{% elif o.status == 'Pending' %}status-pending{% elif o.status == 'Cancelled' %}status-cancelled{% endif %}">
+
+            <div class="order-id-badge">
+                <span>ORDER #<strong>{{ o.id }}</strong></span>
+                <span class="status-badge-custom
+                        {% if o.status == 'Done' %}done-badge
+                        {% elif o.status == 'Pending' %}pending-badge
+                        {% elif o.status == 'Cancelled' %}cancelled-badge
+                        {% endif %}">
+                    {{ o.status }}
+                </span>
+            </div>
+
+            <div class="order-total">
+                ₹{{ o.total }}
+            </div>
+
+            <div class="order-items-list">
+                {% for item in o.products %}
+                <div class="order-item">
+                    <span class="item-title">{{ item.title }}</span>
+                    <span class="item-qty">x{{ item.quantity }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-orders">
+        <h3>No Orders Yet</h3>
+        <p>Looks like you haven't made your first order. Discover our amazing collection!</p>
+        <a href="/books" class="shop-now-btn">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

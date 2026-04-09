@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .ty-page {
+        background: #0b0b0b;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Faded BG text */
+    .ty-bg-text {
+        position: fixed;
+        font-size: clamp(100px, 20vw, 240px);
+        font-weight: 900;
+        color: #e63232;
+        opacity: 0.04;
+        user-select: none;
+        pointer-events: none;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        letter-spacing: 10px;
+        z-index: 0;
+    }
+
+    /* Floating particles */
+    .particles {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #e63232;
+        opacity: 0;
+        animation: floatUp 4s ease-in infinite;
+    }
+    @keyframes floatUp {
+        0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+        15%  { opacity: 0.7; }
+        80%  { opacity: 0.3; }
+        100% { opacity: 0; transform: translateY(-80vh) scale(1.2); }
+    }
+
+    /* Main card */
+    .ty-card {
+        position: relative;
+        z-index: 2;
+        background: #111;
+        border: 1px solid #1e1e1e;
+        border-radius: 20px;
+        padding: 56px 48px;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes cardIn {
+        from { opacity: 0; transform: translateY(40px) scale(0.95); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Checkmark circle */
+    .check-wrap {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(230, 50, 50, 0.08);
+        border: 2px solid #e63232;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 28px;
+        animation: popIn 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes popIn {
+        from { opacity: 0; transform: scale(0.4); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+    .check-icon {
+        font-size: 36px;
+        animation: checkBounce 0.4s 0.7s ease both;
+    }
+    @keyframes checkBounce {
+        0%   { transform: scale(0); }
+        60%  { transform: scale(1.3); }
+        100% { transform: scale(1); }
+    }
+
+    /* Title */
+    .ty-title {
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        animation: fadeUp 0.5s 0.5s ease both;
+    }
+    .ty-title span { color: #e63232; }
+
+    /* Subtitle */
+    .ty-subtitle {
+        font-size: 15px;
+        color: #666;
+        margin-bottom: 32px;
+        line-height: 1.7;
+        animation: fadeUp 0.5s 0.65s ease both;
+    }
+    .ty-subtitle strong { color: #aaa; }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Contact message box */
+    .ty-message {
+        background: rgba(230, 50, 50, 0.06);
+        border: 1px solid rgba(230, 50, 50, 0.2);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 32px;
+        animation: fadeUp 0.5s 0.8s ease both;
+    }
+    .ty-message p {
+        font-size: 14px;
+        color: #bbb;
+        margin: 0;
+        line-height: 1.7;
+    }
+    .ty-message p span {
+        color: #e63232;
+        font-weight: 700;
+    }
+
+    /* Order ID pill */
+    .order-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 20px;
+        padding: 6px 16px;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 32px;
+        animation: fadeUp 0.5s 0.9s ease both;
+    }
+    .order-pill span { color: #aaa; font-weight: 600; }
+
+    /* Buttons */
+    .ty-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeUp 0.5s 1s ease both;
+    }
+    .ty-btn {
+        padding: 12px 28px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: opacity 0.2s, transform 0.15s;
+        cursor: pointer;
+        border: none;
+        display: inline-block;
+    }
+    .ty-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .ty-btn-red { background: #e63232; color: #fff; }
+    .ty-btn-outline { background: transparent; color: #aaa; border: 1px solid #2a2a2a; }
+    .ty-btn-outline:hover { border-color: #555; color: #fff; }
+
+    /* Confetti burst on load */
+    .confetti-piece {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 9999;
+        animation: confettiFall 2.5s ease-in forwards;
+    }
+    @keyframes confettiFall {
+        0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+        100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+    }
+</style>
+
+<div class="ty-page">
+    <div class="ty-bg-text">CODEX</div>
+
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="ty-card">
+
+        <!-- Check icon -->
+        <div class="check-wrap">
+            <span class="check-icon">✓</span>
+        </div>
+
+        <h1 class="ty-title">Thank <span>You!</span></h1>
+
+        <p class="ty-subtitle">
+            Your order has been placed successfully.<br>
+            <strong>We've received your request and are on it!</strong>
+        </p>
+
+        <!-- Contact message -->
+        <div class="ty-message">
+            <p>
+                📞 We will <span>contact you within 12 hours</span> to confirm your order and arrange delivery.
+                Please keep your phone handy!
+            </p>
+        </div>
+
+        <div class="order-pill">
+            Order placed &nbsp;·&nbsp; <span>{{ session.get('email', '') }}</span>
+        </div>
+
+        <div class="ty-actions">
+            <a href="/orders" class="ty-btn ty-btn-red">View My Orders</a>
+            <a href="/books" class="ty-btn ty-btn-outline">Continue Shopping</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Floating particles
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.bottom = '-10px';
+        p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
+        p.style.animationDelay = (Math.random() * 6) + 's';
+        p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        p.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(p);
+    }
+
+    // Confetti burst
+    const colors = ['#e63232', '#ff6b6b', '#fff', '#ffcc00', '#ff8c42'];
+    setTimeout(() => {
+        for (let i = 0; i < 55; i++) {
+            const c = document.createElement('div');
+            c.className = 'confetti-piece';
+            c.style.left = (30 + Math.random() * 40) + 'vw';
+            c.style.top = '30vh';
+            c.style.background = colors[Math.floor(Math.random() * colors.length)];
+            c.style.width = (Math.random() * 8 + 4) + 'px';
+            c.style.height = (Math.random() * 8 + 4) + 'px';
+            c.style.animationDelay = (Math.random() * 0.6) + 's';
+            c.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+            c.style.transform = `translateX(${(Math.random() - 0.5) * 60}vw)`;
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 3500);
+        }
+    }, 400);
+</script>
+
+{% endblock %}

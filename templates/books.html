@@ -1,0 +1,570 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* ── HERO SECTION ── */
+    .hero {
+        position: relative;
+        min-height: 92vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        padding: 40px 20px;
+        background: #0b0b0b;
+    }
+
+    .hero-bg-text {
+        position: absolute;
+        font-size: clamp(120px, 22vw, 260px);
+        font-weight: 900;
+        color: #e63232;
+        letter-spacing: 10px;
+        text-transform: uppercase;
+        opacity: 0.08;
+        user-select: none;
+        pointer-events: none;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        line-height: 1;
+    }
+
+    .hero-title {
+        font-size: clamp(72px, 14vw, 160px);
+        font-weight: 900;
+        color: #e63232;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        line-height: 1;
+        margin: 0 0 20px 0;
+        position: relative;
+        z-index: 2;
+        text-shadow:
+            0 0 80px rgba(230, 50, 50, 0.35),
+            0 0 160px rgba(230, 50, 50, 0.15);
+    }
+
+    .hero-tagline {
+        font-size: 17px;
+        color: #999;
+        margin-bottom: 36px;
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-tagline span {
+        color: #ccc;
+    }
+
+    .hero-search {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+        margin-bottom: 32px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .hero-search input {
+        flex: 1;
+        padding: 14px 22px;
+        border-radius: 50px 0 0 50px;
+        border: 1.5px solid #2a2a2a;
+        border-right: none;
+        background: #141414;
+        color: white;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .hero-search input:focus {
+        border-color: #e63232;
+        box-shadow: none;
+    }
+
+    .hero-search input::placeholder {
+        color: #555;
+    }
+
+    .hero-search button {
+        padding: 14px 28px;
+        border-radius: 0 50px 50px 0;
+        background: #e63232;
+        border: none;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .hero-search button:hover {
+        background: #c52a2a;
+    }
+
+    .hero-cta {
+        display: flex;
+        gap: 14px;
+        position: relative;
+        z-index: 2;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .cta-btn {
+        padding: 12px 28px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        transition: opacity 0.2s, transform 0.15s;
+        display: inline-block;
+    }
+
+    .cta-btn:hover {
+        opacity: 0.85;
+        transform: translateY(-1px);
+    }
+
+    .cta-dark {
+        background: #1e1e1e;
+        color: #fff;
+        border: 1.5px solid #333;
+    }
+
+    .cta-red {
+        background: #e63232;
+        color: #fff;
+    }
+
+    /* ── CART ICON — bottom right of screen ── */
+    .hero-cart {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        background: rgba(20, 20, 20, 0.85);
+        padding: 10px 14px;
+        border-radius: 12px;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Cart icon with notification badge */
+    .hero-cart-icon {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        text-decoration: none;
+        margin-top: 2px;
+    }
+
+    .cart-emoji {
+        font-size: 24px;
+        line-height: 1;
+        transition: transform 0.2s;
+    }
+
+    .hero-cart-icon:hover .cart-emoji {
+        transform: scale(1.15);
+    }
+
+    .cart-notif {
+        position: absolute;
+        top: -6px;
+        right: -10px;
+        background: #e63232;
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        border: 2px solid #0b0b0b;
+        line-height: 1;
+    }
+
+    .cart-notif-label {
+        font-size: 10px;
+        color: #555;
+    }
+
+    /* ── BOOKS SECTION ── */
+    .books-section {
+        background: #0b0b0b;
+        padding: 48px 32px 64px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .section-title span {
+        color: #e63232;
+    }
+
+    .filter-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-bar a {
+        font-size: 13px;
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1px solid #2a2a2a;
+        color: #aaa;
+        text-decoration: none;
+        transition: all 0.2s;
+        background: #111;
+    }
+
+    .filter-bar a:hover,
+    .filter-bar a.active {
+        background: #e63232;
+        border-color: #e63232;
+        color: white;
+    }
+
+    .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 24px;
+        padding: 0;
+    }
+
+    .book-card {
+        background: #111;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #1e1e1e;
+        transition: transform 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .book-card.trending-card {
+        border-color: rgba(230, 50, 50, 0.45);
+        box-shadow: 0 0 18px rgba(230, 50, 50, 0.12);
+    }
+
+    .trending-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #e63232;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        z-index: 3;
+        letter-spacing: 0.3px;
+    }
+
+    .category-badge {
+        font-size: 11px;
+        color: #777;
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .book-card:hover {
+        transform: translateY(-4px);
+        border-color: #e63232;
+    }
+
+    .book-card img {
+        width: 100%;
+        aspect-ratio: 3/4;
+        object-fit: cover;
+        display: block;
+        background: #1a1a1a;
+    }
+
+    .book-info {
+        padding: 14px 14px 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .book-card h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0 0 6px 0;
+        line-height: 1.4;
+    }
+
+    .book-card p {
+        font-size: 16px;
+        color: #e63232;
+        font-weight: 700;
+        margin: 0 0 14px 0;
+    }
+
+    .add-btn {
+        display: block;
+        background: #e63232;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        margin-top: auto;
+        transition: background 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .add-btn:hover {
+        background: #c52a2a;
+    }
+
+    .empty-state {
+        text-align: center;
+        color: #555;
+        padding: 60px 20px;
+        font-size: 16px;
+    }
+
+    /* ── PRICE / DISCOUNT ── */
+    .price-block {
+        margin: 0 0 14px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .sale-price {
+        font-size: 18px;
+        color: #e63232;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .orig-price {
+        font-size: 13px;
+        color: #555;
+        text-decoration: line-through;
+        font-weight: 500;
+    }
+
+    .discount-badge {
+        font-size: 10px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #e63232, #ff6b35);
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 20px;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+    }
+
+    /* Trending: "HOT" section label */
+    .trending-section-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #e63232;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+</style>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg-text">CODEX</div>
+
+    <!-- Cart icon — top right -->
+    <div class="hero-cart">
+        <a href="/cart" class="hero-cart-icon">
+            <span class="cart-emoji">🛒</span>
+            <span class="cart-notif">{{ cart_count }}</span>
+            <span class="cart-notif-label">Cart</span>
+        </a>
+    </div>
+
+    <h1 class="hero-title">CODEX</h1>
+
+    <p class="hero-tagline">
+        The Chapter X Begins — <span>Revolutionizing how students share books.</span>
+    </p>
+
+    <form action="/search" method="GET" class="hero-search">
+        <input name="q" placeholder="Search for books, authors, ISBN ...">
+        <button type="submit">Search</button>
+    </form>
+
+
+</section>
+
+<!-- BOOKS LISTING -->
+<section class="books-section">
+    <div class="section-header">
+        <h2 class="section-title">All <span>Books</span></h2>
+        <div class="filter-bar">
+            <a href="/books" class="active">All</a>
+            <a href="/filter?trending=1">🔥 Trending</a>
+            <a href="/filter?category=6-8">Class 6–8</a>
+            <a href="/filter?category=9-10">Class 9–10</a>
+            <a href="/filter?category=11-12">Class 11–12</a>
+        </div>
+    </div>
+
+    {% if books %}
+    <div class="books-grid">
+        {% for b in books %}
+        <div class="book-card{% if b.trending %} trending-card{% endif %}">
+            {% if b.trending %}
+            <span class="trending-badge">🔥 Trending</span>
+            {% endif %}
+            {% if b.images %}
+            {% set imgs = b.images.split(',') %}
+            <img src="{{ url_for('static', filename='uploads/' + imgs[0]) }}" alt="{{ b.title }}">
+            {% else %}
+            <img src="{{ url_for('static', filename='default.png') }}" alt="{{ b.title }}">
+            {% endif %}
+            <div class="book-info">
+                {% if b.category %}<span class="category-badge">📚 Class {{ b.category }}</span>{% endif %}
+                <h3>{{ b.title }}</h3>
+                <div class="price-block">
+                    <span class="sale-price">₹{{ b.price }}</span>
+                    {% if b.original_price and b.original_price|float > b.price|float %}
+                    <span class="orig-price">₹{{ b.original_price|int }}</span>
+                    <span class="discount-badge">{{ ((b.original_price|float - b.price|float) / b.original_price|float *
+                        100) | round | int }}% OFF</span>
+                    {% endif %}
+                </div>
+                <button class="add-btn" data-id="{{ b.id }}">Add to Cart</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">No books found. Check back soon!</div>
+    {% endif %}
+</section>
+
+<!-- Toast notification -->
+<style>
+    .toast {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-left: 3px solid #e63232;
+        color: #fff;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 9999;
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.25s, transform 0.25s;
+        pointer-events: none;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .add-btn.added {
+        background: #27ae60 !important;
+    }
+
+    .add-btn.added::after {
+        content: ' ✓';
+    }
+</style>
+
+<div class="toast" id="toast">Added to cart!</div>
+
+<script>
+    const badge = document.querySelector('.cart-notif');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.classList.add('added');
+            this.textContent = 'Added ✓';
+
+            fetch('/add/' + id)
+                .then(r => {
+                    // update badge
+                    let count = parseInt(badge.textContent) || 0;
+                    badge.textContent = count + 1;
+                    showToast('Book added to cart!');
+                })
+                .catch(() => {
+                    showToast('Something went wrong!');
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.classList.remove('added');
+                        this.textContent = originalText;
+                    }, 1800);
+                });
+        });
+    });
+</script>
+
+{% include 'footer.html' %}
+{% endblock %}

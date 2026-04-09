@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Panel – Codex Rebels</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body { background: #0b0b0b; color: #eee; font-family: 'Inter', sans-serif; margin: 0; }
+
+        .navbar { background: #111; padding: 14px 32px; border-bottom: 1px solid #1e1e1e; }
+        .navbar a { color: #e63232; text-decoration: none; font-weight: 700; font-size: 16px; }
+
+        .container { max-width: 960px; margin: 40px auto; padding: 0 24px; }
+
+        h2 { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        h3 { font-size: 18px; color: #ccc; margin: 28px 0 14px; }
+
+        /* ── FORM ── */
+        .add-form {
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 14px;
+            padding: 28px 32px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-grid .full { grid-column: 1 / -1; }
+
+        .form-row { display: flex; flex-direction: column; gap: 6px; }
+        .form-row label { font-size: 13px; color: #888; font-weight: 600; letter-spacing: 0.4px; }
+        .form-row input[type="text"],
+        .form-row input[type="number"],
+        .form-row input[type="file"],
+        .form-row select {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #fff;
+            padding: 11px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-row input:focus, .form-row select:focus { border-color: #e63232; }
+        .form-row select option { background: #111; }
+
+        .price-hint {
+            font-size: 11px;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .trending-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 16px 0;
+            padding: 14px 16px;
+            background: rgba(230,50,50,0.06);
+            border: 1px solid rgba(230,50,50,0.15);
+            border-radius: 8px;
+        }
+        .trending-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e63232; cursor: pointer; }
+        .trending-row label { font-size: 14px; color: #ccc; cursor: pointer; }
+
+        .btn-add {
+            background: #e63232;
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 4px;
+        }
+        .btn-add:hover { background: #c52a2a; }
+
+        /* ── BOOK LIST ── */
+        .books-list { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
+
+        .admin-book-card {
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: border-color 0.2s;
+        }
+        .admin-book-card.is-trending { border-color: rgba(230,50,50,0.4); }
+        .admin-book-card:hover { border-color: #2a2a2a; }
+        .admin-book-card.is-trending:hover { border-color: rgba(230,50,50,0.6); }
+
+        .admin-book-card img {
+            width: 56px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #1a1a1a;
+            flex-shrink: 0;
+        }
+
+        .admin-book-info { flex: 1; }
+        .admin-book-info h4 { margin: 0 0 3px; font-size: 15px; color: #fff; }
+        .admin-book-info .price-row { display: flex; align-items: center; gap: 8px; margin: 3px 0 6px; }
+        .admin-book-info .sale-price { font-size: 15px; font-weight: 700; color: #e63232; }
+        .admin-book-info .orig-price { font-size: 13px; color: #555; text-decoration: line-through; }
+        .admin-book-info p { margin: 0; font-size: 13px; color: #777; }
+
+        .badge-category {
+            font-size: 11px;
+            background: #1e1e1e;
+            color: #aaa;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-weight: 600;
+        }
+        .badge-trending {
+            font-size: 11px;
+            background: rgba(230, 50, 50, 0.15);
+            color: #e63232;
+            border: 1px solid rgba(230, 50, 50, 0.3);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-weight: 700;
+        }
+
+        .admin-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+
+        .btn-sm {
+            padding: 7px 16px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+            display: inline-block;
+        }
+        .btn-sm:hover { opacity: 0.8; }
+
+        .btn-edit      { background: #1e1e1e; color: #ccc; border: 1px solid #2a2a2a; }
+        .btn-delete    { background: rgba(230,50,50,0.15); color: #e63232; border: 1px solid rgba(230,50,50,0.3); }
+        .btn-trend-on  { background: rgba(230,50,50,0.85); color: #fff; }
+        .btn-trend-off { background: #1a1a1a; color: #777; border: 1px solid #2a2a2a; }
+
+        hr { border: none; border-top: 1px solid #1e1e1e; margin: 32px 0; }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="/">← Back to Site</a>
+    </div>
+
+    <div class="container">
+        <h2>⚙️ Admin Panel</h2>
+
+        <h3>Add New Book</h3>
+        <div class="add-form">
+            <form method="post" action="/add_book" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-row full">
+                        <label>Book Title</label>
+                        <input type="text" name="title" placeholder="e.g. Mathematics Class 10" required>
+                    </div>
+                    <div class="form-row full">
+                        <label>Author / Publisher</label>
+                        <input type="text" name="author" placeholder="e.g. R.D. Sharma" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Selling Price (₹)</label>
+                        <input type="number" name="price" placeholder="e.g. 249" required>
+                        <span class="price-hint">Actual price shown to buyers</span>
+                    </div>
+                    <div class="form-row">
+                        <label>Original / MRP (₹) <span style="color:#555;font-weight:400;">(optional)</span></label>
+                        <input type="number" name="original_price" placeholder="e.g. 399">
+                        <span class="price-hint">Will show as ~~strikethrough~~ for discount effect</span>
+                    </div>
+                    <div class="form-row">
+                        <label>Class Category</label>
+                        <select name="category" required>
+                            <option value="" disabled selected>Select class group</option>
+                            <option value="6-8">Class 6–8</option>
+                            <option value="9-10">Class 9–10</option>
+                            <option value="11-12">Class 11–12</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Book Cover Image</label>
+                        <input type="file" name="image" accept="image/*" required>
+                    </div>
+                </div>
+
+                <div class="trending-row">
+                    <input type="checkbox" name="trending" id="trending-check">
+                    <label for="trending-check">🔥 Mark as Trending — will appear at the top of the books listing</label>
+                </div>
+                <button type="submit" class="btn-add">➕ Add Book</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <h3>All Books ({{ books|length }})</h3>
+
+        <div class="books-list">
+            {% for b in books %}
+            <div class="admin-book-card{% if b.trending %} is-trending{% endif %}">
+                {% if b.images %}
+                {% set imgs = b.images.split(',') %}
+                <img src="{{ url_for('static', filename='uploads/' + imgs[0]) }}" alt="{{ b.title }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='default.png') }}" alt="{{ b.title }}">
+                {% endif %}
+
+                <div class="admin-book-info">
+                    <h4>{{ b.title }}</h4>
+                    <div class="price-row">
+                        <span class="sale-price">₹{{ b.price }}</span>
+                        {% if b.original_price and b.original_price > b.price %}
+                        <span class="orig-price">₹{{ b.original_price|int }}</span>
+                        {% endif %}
+                    </div>
+                    <p>{{ b.author }}</p>
+                    <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                        {% if b.category %}<span class="badge-category">📚 Class {{ b.category }}</span>{% endif %}
+                        {% if b.trending %}<span class="badge-trending">🔥 Trending</span>{% endif %}
+                    </div>
+                </div>
+
+                <div class="admin-actions">
+                    {% if b.trending %}
+                    <a href="/toggle_trending/{{ b.id }}" class="btn-sm btn-trend-on">🔥 ON</a>
+                    {% else %}
+                    <a href="/toggle_trending/{{ b.id }}" class="btn-sm btn-trend-off">Set Trending</a>
+                    {% endif %}
+                    <a href="/edit/{{ b.id }}" class="btn-sm btn-edit">Edit</a>
+                    <a href="/delete/{{ b.id }}" class="btn-sm btn-delete" onclick="return confirm('Delete this book?')">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+
+</html>

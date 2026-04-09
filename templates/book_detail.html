@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>{{ book.title }}</h2>
+
+        {% set imgs = book.images.split(',') %}
+
+        <div class="images">
+            {% for img in imgs %}
+            <img src="{{ url_for('static', filename='uploads/' + img) }}" width="200">
+            {% endfor %}
+        </div>
+
+        <p><b>Author:</b> {{ book.author }}</p>
+        <p><b>Price:</b> ₹{{ book.price }}</p>
+
+        <a class="btn" href="/add/{{ book.id }}">Add to Cart</a>
+
+    </div>
+
+</body>
+
+</html>
