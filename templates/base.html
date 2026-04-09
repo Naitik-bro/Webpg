@@ -3,280 +3,38 @@
 
 <head>
     <title>Codex</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        .top-bar {
-            background: #111;
-            color: #ccc;
-            text-align: center;
-            font-size: 12px;
-            padding: 8px 16px;
-            border-bottom: 1px solid #222;
-        }
-        .top-bar a { color: #e63232; text-decoration: none; font-weight: 600; }
-
-        /* ── NAVBAR ── */
-        .navbar {
-            background: #0b0b0b;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 24px;
-            border-bottom: 1px solid #1f1f1f;
-            position: relative;
-            z-index: 100;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-        .nav-logo { font-size: 20px; font-weight: 900; color: #e63232; letter-spacing: 2px; }
-        .nav-alpha {
-            font-size: 9px; font-weight: 700; letter-spacing: 2px; color: #888;
-            border: 1px solid #333; border-radius: 4px; padding: 2px 5px; text-transform: uppercase;
-        }
-
-        /* Desktop nav links */
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            flex-wrap: nowrap;
-        }
-        .nav-links a {
-            color: #ccc; text-decoration: none; font-size: 13px;
-            padding: 6px 10px; border-radius: 6px; transition: background 0.2s, color 0.2s;
-            white-space: nowrap;
-        }
-        .nav-links a:hover { background: #1a1a1a; color: #fff; }
-        .nav-links .admin-link { color: #e63232; font-weight: 600; }
-
-        .nav-search {
-            display: flex;
-            align-items: center;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            overflow: hidden;
-            width: 180px;
-            flex-shrink: 0;
-        }
-        .nav-search input {
-            background: transparent; border: none; outline: none;
-            color: #fff; font-size: 13px; padding: 7px 12px; width: 100%;
-        }
-        .nav-search input::placeholder { color: #555; }
-        .nav-search button {
-            background: #e63232; border: none; color: white;
-            padding: 7px 12px; cursor: pointer; font-size: 12px; font-weight: 600; flex-shrink: 0;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-shrink: 0;
-        }
-        .nav-profile { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-        .profile-avatar {
-            width: 32px; height: 32px; border-radius: 50%; background: #1e1e1e;
-            border: 1.5px solid #2a2a2a; display: flex; align-items: center;
-            justify-content: center; font-size: 14px;
-        }
-        .profile-email-text { font-size: 10px; color: #555; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        .cart-icon-wrap {
-            position: relative; display: flex; flex-direction: column;
-            align-items: center; gap: 2px; text-decoration: none;
-        }
-        .cart-icon { font-size: 20px; color: #aaa; transition: color 0.2s; }
-        .cart-icon-wrap:hover .cart-icon { color: #fff; }
-        .cart-badge {
-            position: absolute; top: -6px; right: -9px; background: #e63232;
-            color: white; font-size: 9px; font-weight: 700; min-width: 17px; height: 17px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            padding: 0 3px; border: 2px solid #0b0b0b;
-        }
-        .cart-label { font-size: 9px; color: #555; }
-        .nav-logout {
-            font-size: 12px; color: #e63232; text-decoration: none; font-weight: 600;
-            padding: 5px 12px; border: 1px solid #2a2a2a; border-radius: 6px; transition: background 0.2s; white-space: nowrap;
-        }
-        .nav-logout:hover { background: #1a1a1a; }
-
-        /* Hamburger button — hidden on desktop */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            padding: 4px;
-            background: none;
-            border: none;
-        }
-        .hamburger span {
-            display: block; width: 22px; height: 2px;
-            background: #aaa; border-radius: 2px; transition: all 0.3s;
-        }
-        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-        /* Mobile menu drawer */
-        .mobile-menu {
-            display: none;
-            flex-direction: column;
-            background: #0f0f0f;
-            border-bottom: 1px solid #1e1e1e;
-            padding: 16px 20px;
-            gap: 6px;
-        }
-        .mobile-menu.open { display: flex; }
-        .mobile-menu a {
-            color: #ccc; text-decoration: none; font-size: 15px;
-            padding: 10px 12px; border-radius: 8px; transition: background 0.2s;
-        }
-        .mobile-menu a:hover { background: #1a1a1a; color: #fff; }
-        .mobile-menu .admin-link { color: #e63232; font-weight: 600; }
-        .mobile-menu .mobile-search {
-            display: flex; margin-top: 8px; border-radius: 8px; overflow: hidden;
-            border: 1px solid #2a2a2a;
-        }
-        .mobile-menu .mobile-search input {
-            flex: 1; background: #1a1a1a; border: none; color: #fff;
-            padding: 10px 14px; font-size: 14px; outline: none;
-        }
-        .mobile-menu .mobile-search button {
-            background: #e63232; border: none; color: white;
-            padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
-        }
-        .mobile-bottom-row {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-top: 8px; padding-top: 12px; border-top: 1px solid #1e1e1e;
-        }
-        .mobile-email { font-size: 12px; color: #555; }
-        .mobile-logout {
-            font-size: 13px; color: #e63232; text-decoration: none;
-            font-weight: 600; padding: 6px 14px; border: 1px solid #2a2a2a; border-radius: 6px;
-        }
-
-        /* ── RESPONSIVE BREAKPOINTS ── */
-        @media (max-width: 900px) {
-            .nav-links { display: none; }
-            .nav-search { display: none; }
-            .nav-profile { display: none; }
-            .nav-logout { display: none; }
-            .hamburger { display: flex; }
-        }
-
-        @media (max-width: 480px) {
-            .top-bar { font-size: 11px; padding: 7px 12px; }
-            .navbar { padding: 10px 16px; }
-            .nav-logo { font-size: 18px; }
-        }
-    </style>
 </head>
 
 <body>
 
-    <div class="top-bar">
-        🔥 Codex Alpha is live — donate, resell, and find books fast.
-        <a href="#">Sell your books</a> or <a href="#">donate now</a>.
-    </div>
+    <div class="navbar">
+        <div class="nav-left">
+            <span class="logo">CODEX</span>
+        </div>
 
-    <nav class="navbar">
-        <a href="/books" class="nav-brand">
-            <span class="nav-logo">Codex</span>
-            <span class="nav-alpha">Alpha</span>
-        </a>
-
-        <!-- Desktop links -->
-        <div class="nav-links">
-            <a href="/books">Home</a>
-            <a href="/books">Categories ▾</a>
-            <a href="#">About</a>
-            <a href="#">Resell</a>
-            <a href="#">Donate</a>
-            <a href="#">FAQ</a>
+        <div class="nav-center">
+            <a href="/books">Books</a>
+            <a href="/cart">Cart</a>
             <a href="/orders">Orders</a>
+            <a href="/logout" class="logout-link">Logout</a>
             {% if session.get('email') == 'admin@gmail.com' %}
-            <a href="/admin" class="admin-link">Admin</a>
-            <a href="/admin_orders" class="admin-link">Admin Orders</a>
+            <a href="/admin">Admin</a>
+            <a href="/admin_orders">Admin Orders</a>
+
             {% endif %}
         </div>
 
-        <!-- Desktop search -->
-        <form class="nav-search" action="/search" method="GET">
-            <input type="text" name="q" placeholder="Search books...">
-            <button type="submit">Search</button>
-        </form>
-
         <div class="nav-right">
-            <!-- Desktop profile -->
-            <div class="nav-profile">
-                <div class="profile-avatar">👤</div>
-                <span class="profile-email-text">{{ session.get('email', 'Guest') }}</span>
+            <div class="profile-box">
+                <span class="profile-icon">👤</span>
+                <span class="profile-email">{{ session.get('email', 'Guest') }}</span>
             </div>
-
-            <!-- Cart badge — always visible -->
-            <a href="/cart" class="cart-icon-wrap">
-                <span class="cart-icon">🛒</span>
-                <span class="cart-badge">{{ cart_count }}</span>
-                <span class="cart-label">Cart</span>
-            </a>
-
-            <!-- Desktop logout -->
-            <a href="/logout" class="nav-logout">Logout</a>
-
-            <!-- Hamburger -->
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Mobile drawer -->
-    <div class="mobile-menu" id="mobileMenu">
-        <a href="/books">🏠 Home</a>
-        <a href="/books">📚 Categories</a>
-        <a href="#">ℹ️ About</a>
-        <a href="#">🔄 Resell</a>
-        <a href="#">🎁 Donate</a>
-        <a href="#">❓ FAQ</a>
-        <a href="/orders">📦 My Orders</a>
-        {% if session.get('email') == 'admin@gmail.com' %}
-        <a href="/admin" class="admin-link">⚙️ Admin</a>
-        <a href="/admin_orders" class="admin-link">📋 Admin Orders</a>
-        {% endif %}
-
-        <form class="mobile-search" action="/search" method="GET">
-            <input type="text" name="q" placeholder="Search books, authors...">
-            <button type="submit">Go</button>
-        </form>
-
-        <div class="mobile-bottom-row">
-            <span class="mobile-email">{{ session.get('email', '') }}</span>
-            <a href="/logout" class="mobile-logout">Logout</a>
         </div>
     </div>
 
     {% block content %}{% endblock %}
 
-    <script>
-        const btn = document.getElementById('hamburger');
-        const menu = document.getElementById('mobileMenu');
-        btn.addEventListener('click', () => {
-            btn.classList.toggle('open');
-            menu.classList.toggle('open');
-        });
-    </script>
-
 </body>
+
 </html>
