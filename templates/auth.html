@@ -1,181 +1,92 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Codex — Welcome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0b0b0b;
-            color: white;
-            font-family: Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
+            background: #0b0b0b; color: white; font-family: Arial, sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
         }
-
-        /* Giant background CODEX */
         .bg-text {
             position: fixed;
-            font-size: clamp(130px, 24vw, 280px);
-            font-weight: 900;
-            color: #e63232;
-            letter-spacing: 12px;
-            opacity: 0.06;
-            user-select: none;
-            pointer-events: none;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            white-space: nowrap;
-            z-index: 0;
+            font-size: clamp(80px, 22vw, 280px);
+            font-weight: 900; color: #e63232; letter-spacing: 10px;
+            opacity: 0.06; user-select: none; pointer-events: none;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            white-space: nowrap; z-index: 0;
         }
-
-        /* Top bar */
         .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #0f0f0f;
-            border-bottom: 1px solid #1a1a1a;
-            text-align: center;
-            font-size: 13px;
-            color: #888;
-            padding: 9px 16px;
-            z-index: 10;
+            position: fixed; top: 0; left: 0; right: 0;
+            background: #0f0f0f; border-bottom: 1px solid #1a1a1a;
+            text-align: center; font-size: 12px; color: #888;
+            padding: 9px 16px; z-index: 10;
         }
+        .top-bar a { color: #e63232; text-decoration: none; font-weight: 600; }
 
-        .top-bar a {
-            color: #e63232;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Center content */
         .auth-wrapper {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 0;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            padding: 20px 24px;
         }
-
         .main-logo {
-            font-size: clamp(80px, 15vw, 150px);
-            font-weight: 900;
-            color: #e63232;
-            letter-spacing: 8px;
-            line-height: 1;
-            margin-bottom: 12px;
-            text-shadow:
-                0 0 80px rgba(230, 50, 50, 0.3),
-                0 0 160px rgba(230, 50, 50, 0.12);
+            font-size: clamp(60px, 18vw, 150px);
+            font-weight: 900; color: #e63232; letter-spacing: 6px;
+            line-height: 1; margin-bottom: 10px;
+            text-shadow: 0 0 80px rgba(230,50,50,0.3), 0 0 160px rgba(230,50,50,0.12);
         }
-
         .alpha-badge {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: #666;
-            border: 1px solid #2a2a2a;
-            border-radius: 4px;
-            padding: 3px 10px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+            font-size: 10px; font-weight: 700; letter-spacing: 3px;
+            color: #666; border: 1px solid #2a2a2a; border-radius: 4px;
+            padding: 3px 10px; margin-bottom: 18px; text-transform: uppercase;
         }
-
         .tagline {
-            font-size: 16px;
-            color: #777;
-            margin-bottom: 40px;
-            letter-spacing: 0.3px;
+            font-size: clamp(13px, 3.5vw, 16px);
+            color: #777; margin-bottom: 32px; line-height: 1.6;
+            max-width: 340px;
         }
+        .tagline span { color: #aaa; }
 
-        .tagline span {
-            color: #aaa;
-        }
-
-        /* Auth buttons */
-        .auth-buttons {
-            display: flex;
-            gap: 14px;
-            justify-content: center;
-        }
-
+        .auth-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .auth-btn {
-            padding: 13px 36px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            transition: opacity 0.2s, transform 0.15s;
-            letter-spacing: 0.3px;
+            padding: 12px 32px; border-radius: 8px; font-size: 15px;
+            font-weight: 700; text-decoration: none; transition: opacity 0.2s, transform 0.15s;
         }
+        .auth-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: #fff; border: 1.5px solid #333; }
+        .btn-outline:hover { border-color: #555; background: #141414; }
+        .btn-red { background: #e63232; color: #fff; border: none; }
 
-        .auth-btn:hover {
-            opacity: 0.85;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #fff;
-            border: 1.5px solid #333;
-        }
-
-        .btn-outline:hover {
-            border-color: #555;
-            background: #141414;
-        }
-
-        .btn-red {
-            background: #e63232;
-            color: #fff;
-        }
-
-        /* Bottom vision label */
         .vision-label {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            color: #333;
-            text-transform: uppercase;
-            z-index: 2;
+            position: fixed; bottom: 24px; right: 24px;
+            font-size: 10px; letter-spacing: 3px; color: #2a2a2a;
+            text-transform: uppercase; z-index: 2;
+        }
+
+        @media (max-width: 480px) {
+            .top-bar { font-size: 11px; padding: 8px 12px; }
+            .auth-buttons { flex-direction: column; width: 100%; max-width: 280px; }
+            .auth-btn { text-align: center; padding: 13px; }
+            .tagline { font-size: 13px; }
         }
     </style>
 </head>
-
 <body>
-
     <div class="bg-text">CODEX</div>
-
     <div class="top-bar">
-        🔥 Codex Rebel is live — donate, resell, and find books fast.
+        🔥 Codex Alpha is live — donate, resell, and find books fast.
         <a href="#">Sell your books</a> or <a href="#">donate now</a>.
     </div>
 
     <div class="auth-wrapper">
         <h1 class="main-logo">CODEX</h1>
-        <span class="alpha-badge">Rebel</span>
+        <span class="alpha-badge">Alpha</span>
         <p class="tagline">The Chapter X Begins — <span>Revolutionizing how students share books.</span></p>
-
         <div class="auth-buttons">
             <a href="/login" class="auth-btn btn-outline">Sign in</a>
             <a href="/signup" class="auth-btn btn-red">Get Started</a>
@@ -183,7 +94,5 @@
     </div>
 
     <div class="vision-label">Vision</div>
-
 </body>
-
 </html>
