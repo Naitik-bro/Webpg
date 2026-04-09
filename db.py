@@ -51,8 +51,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             total REAL NOT NULL,
-            address TEXT NOT NULL,
-            phone TEXT NOT NULL,
+            address TEXT NOT NULL DEFAULT '',
+            phone TEXT NOT NULL DEFAULT '',
             status TEXT NOT NULL DEFAULT 'Pending'
         )
     """)
@@ -65,6 +65,19 @@ def init_db():
             quantity INTEGER NOT NULL
         )
     """)
+
+    # ---- old schema fix ----
+    cur.execute("PRAGMA table_info(orders)")
+    columns = [row[1] for row in cur.fetchall()]
+
+    if "address" not in columns:
+        cur.execute("ALTER TABLE orders ADD COLUMN address TEXT NOT NULL DEFAULT ''")
+
+    if "phone" not in columns:
+        cur.execute("ALTER TABLE orders ADD COLUMN phone TEXT NOT NULL DEFAULT ''")
+
+    if "status" not in columns:
+        cur.execute("ALTER TABLE orders ADD COLUMN status TEXT NOT NULL DEFAULT 'Pending'")
 
     con.commit()
 

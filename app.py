@@ -102,7 +102,7 @@ def books():
     con = get_connection()
     cur = con.cursor()
     cur.execute("SELECT * FROM books ORDER BY trending DESC, id DESC")
-    books_data = cur.fetchall()
+    books_data = [dict(row) for row in cur.fetchall()]
     con.close()
 
     cart_count = get_cart_count(session["user_id"])
@@ -163,7 +163,7 @@ def cart():
         """,
         (session["user_id"],),
     )
-    items = cur.fetchall()
+    items = [dict(row) for row in cur.fetchall()]
     con.close()
 
     total = sum(item["price"] * item["quantity"] for item in items)
@@ -198,7 +198,7 @@ def admin():
     con = get_connection()
     cur = con.cursor()
     cur.execute("SELECT * FROM books ORDER BY id DESC")
-    books_data = cur.fetchall()
+    books_data = [dict(row) for row in cur.fetchall()]
     con.close()
 
     return render_template("admin.html", books=books_data)
@@ -289,7 +289,7 @@ def edit_book(id):
     if not book:
         return "Book not found"
 
-    return render_template("edit.html", book=book)
+    return render_template("edit.html", book=dict(book))
 
 
 @app.route("/update/<int:id>", methods=["POST"])
@@ -329,7 +329,7 @@ def book_detail(id):
     if not book:
         return "Book not found"
 
-    return render_template("book_detail.html", book=book)
+    return render_template("book_detail.html", book=dict(book))
 
 
 @app.route("/search")
@@ -339,7 +339,7 @@ def search():
     con = get_connection()
     cur = con.cursor()
     cur.execute("SELECT * FROM books WHERE title LIKE ?", ("%" + q + "%",))
-    books_data = cur.fetchall()
+    books_data = [dict(row) for row in cur.fetchall()]
     con.close()
 
     cart_count = get_cart_count(session["user_id"]) if "user_id" in session else 0
@@ -364,7 +364,7 @@ def filter_books():
     else:
         cur.execute("SELECT * FROM books ORDER BY trending DESC, id DESC")
 
-    books_data = cur.fetchall()
+    books_data = [dict(row) for row in cur.fetchall()]
     con.close()
 
     cart_count = get_cart_count(session["user_id"]) if "user_id" in session else 0
@@ -404,7 +404,7 @@ def place_order():
         """,
         (user_id,),
     )
-    items = cur.fetchall()
+    items = [dict(row) for row in cur.fetchall()]
 
     if not items:
         con.close()
@@ -440,20 +440,26 @@ def orders():
     con = get_connection()
     cur = con.cursor()
 
-    cur.execute("SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC", (user_id,))
-    orders_data = cur.fetchall()
+    cur.execute("""
+        SELECT id, total, address, phone, status
+        FROM orders
+        WHERE user_id = ?
+        ORDER BY id DESC
+    """, (user_id,))
+    raw_orders = cur.fetchall()
 
-    for order in orders_data:
-        cur.execute(
-            """
+    orders_data = []
+    for row in raw_orders:
+        order = dict(row)
+
+        cur.execute("""
             SELECT books.title, order_items.quantity
             FROM order_items
             JOIN books ON order_items.book_id = books.id
             WHERE order_items.order_id = ?
-            """,
-            (order["id"],),
-        )
-        order["products"] = cur.fetchall()
+        """, (order["id"],))
+        order["products"] = [dict(x) for x in cur.fetchall()]
+        orders_data.append(order)
 
     con.close()
     return render_template("orders.html", orders=orders_data)
@@ -467,28 +473,27 @@ def admin_orders():
     con = get_connection()
     cur = con.cursor()
 
-    cur.execute(
-        """
+    cur.execute("""
         SELECT orders.id, orders.total, orders.address, orders.phone,
                orders.status, users.email
         FROM orders
         JOIN users ON orders.user_id = users.id
         ORDER BY orders.id DESC
-        """
-    )
-    orders_data = cur.fetchall()
+    """)
+    raw_orders = cur.fetchall()
 
-    for order in orders_data:
-        cur.execute(
-            """
+    orders_data = []
+    for row in raw_orders:
+        order = dict(row)
+
+        cur.execute("""
             SELECT books.title, order_items.quantity
             FROM order_items
             JOIN books ON order_items.book_id = books.id
             WHERE order_items.order_id = ?
-            """,
-            (order["id"],),
-        )
-        order["products"] = cur.fetchall()
+        """, (order["id"],))
+        order["products"] = [dict(x) for x in cur.fetchall()]
+        orders_data.append(order)
 
     con.close()
     return render_template("admin_orders.html", orders=orders_data)
