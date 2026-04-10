@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Codex</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
+    <!-- NAVBAR -->
     <div class="navbar">
         <div class="nav-left">
             <span class="logo">CODEX</span>
         </div>
-
+        <!-- Desktop links -->
         <div class="nav-center">
             <a href="/books">Books</a>
             <a href="/cart">Cart</a>
@@ -21,20 +21,40 @@
             {% if session.get('email') == 'admin@gmail.com' %}
             <a href="/admin">Admin</a>
             <a href="/admin_orders">Admin Orders</a>
-
             {% endif %}
         </div>
-
+        <!-- Profile (desktop) -->
         <div class="nav-right">
             <div class="profile-box">
                 <span class="profile-icon">👤</span>
                 <span class="profile-email">{{ session.get('email', 'Guest') }}</span>
             </div>
         </div>
+        <!-- Hamburger (mobile) -->
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
     </div>
+
+    <!-- Mobile drawer -->
+    <nav class="nav-drawer" id="navDrawer">
+        <a href="/books">📚 Books</a>
+        <a href="/cart">🛒 Cart</a>
+        <a href="/orders">📦 Orders</a>
+        {% if session.get('email') == 'admin@gmail.com' %}
+        <a href="/admin">🛠 Admin</a>
+        <a href="/admin_orders">📋 Admin Orders</a>
+        {% endif %}
+        <a href="/logout" class="logout-link">🚪 Logout</a>
+        <a style="color:#555;font-size:12px;pointer-events:none;">{{ session.get('email','Guest') }}</a>
+    </nav>
 
     {% block content %}{% endblock %}
 
+    <script>
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navDrawer').classList.toggle('open');
+        });
+    </script>
 </body>
-
 </html>
